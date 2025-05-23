@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'app_brain.dart';
+
+AppBrain appBrain = AppBrain();
 
 void main() {
   runApp(const MyApp());
@@ -28,6 +32,54 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   List<Widget> answerList = [];
+  int rightAnswers = 0;
+  int totalQuestions = appBrain.questionGroup.length;
+
+  void checkAnswer(userAnswer) {
+    bool correctAnswer = appBrain.getQuestionAnswer();
+    setState(() {
+      if (userAnswer == correctAnswer) {
+        rightAnswers++;
+        answerList.add(
+          Padding(
+            padding: const EdgeInsets.all(3.0),
+            child: Icon(Icons.thumb_up, color: Colors.green),
+          ),
+        );
+      } else {
+        answerList.add(
+          Padding(
+            padding: const EdgeInsets.all(3.0),
+            child: Icon(Icons.thumb_down, color: Colors.red),
+          ),
+        );
+      }
+      if (appBrain.isFinished()) {
+        Alert(
+          context: context,
+          title: "End of the Quiz",
+          desc: "You answered $rightAnswers questions correctly out of $totalQuestions",
+          buttons: [
+            DialogButton(
+              onPressed: () => Navigator.pop(context),
+              color: Colors.lightBlue,
+              width: 120,
+              child: Text(
+                "Start Over",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ),
+          ],
+        ).show();
+
+        appBrain.reset();
+        answerList = [];
+        rightAnswers = 0;
+      } else {
+        appBrain.nextQuestion();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +91,10 @@ class _BodyState extends State<Body> {
           flex: 5,
           child: Column(
             children: [
-              Image.asset('images/image-1.jpg'),
+              Image.asset(appBrain.getQuestionImage()),
               SizedBox(height: 20),
               Text(
-                'The number of planets in the solar system is eight planets',
+                appBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 24),
               ),
