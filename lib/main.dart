@@ -106,7 +106,7 @@ class _BodyState extends State<Body> {
             padding: const EdgeInsets.all(10.0),
             child: TextButton(
               onPressed: () {
-                
+                checkAnswer(true);
               },
               style: TextButton.styleFrom(backgroundColor: Colors.indigo),
               child: Text(
@@ -122,7 +122,7 @@ class _BodyState extends State<Body> {
             child: TextButton(
               style: TextButton.styleFrom(backgroundColor: Colors.deepOrange),
               onPressed: () {
-                
+                checkAnswer(false);
               },
               child: Text(
                 'False',
